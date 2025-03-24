@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: com.unittest.controller.CountryControllerIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 4.246 s <<< FAILURE! - in com.unittest.controller.CountryControllerIntegrationTest
+testGetAllCountries  Time elapsed: 0.161 s  <<< FAILURE!
+java.lang.AssertionError: Status expected:<200> but was:<404>
+	at com.unittest.controller.CountryControllerIntegrationTest.testGetAllCountries(CountryRepositoryTest.java:24)
+
