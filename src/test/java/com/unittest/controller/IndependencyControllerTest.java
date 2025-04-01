@@ -1,50 +1,65 @@
 package com.unittest.controller;
 
-import com.unittest.TutorialUnitTestApplication;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import com.unittest.models.Country;
 import com.unittest.models.CountryResponse;
+import com.unittest.repositories.CountryRepository;
+import com.unittest.util.DiferenciaEntreFechas;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
+import java.time.Period;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
-import static org.junit.jupiter.api.Assertions.*;
+@ExtendWith(MockitoExtension.class)
+class IndependencyControllerTest {
 
-@SpringBootTest(classes = TutorialUnitTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")  // Usa configuración de pruebas
-public class IndependencyControllerTest {
+    @Mock
+    private CountryRepository countryRepository;
 
-    @LocalServerPort
-    private int port;
+    @Mock
+    private DiferenciaEntreFechas diferenciaEntreFechas;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    @InjectMocks
+    private IndependencyController independencyController;
 
-    private String buildUrl(String path) {
-        return "http://localhost:" + port + path;
+    @BeforeEach
+    void setUp() {
+        
     }
 
     @Test
-    void getCountryDetailsWithValidCountryCode() {
-        ResponseEntity<CountryResponse> response = restTemplate.getForEntity(
-                buildUrl("/api/country/DO"), CountryResponse.class);
-        
-        assertEquals(200, response.getStatusCodeValue());
-        assertNotNull(response.getBody());
-        assertEquals("Republica Dominicana", response.getBody().getCountryName());
+    void getCountryDetails_shouldReturnCountryResponse() {
+        String countryId = "CO";
+        Country country = new Country();
+        country.setCountryName("Colombia");
+        country.setCountryCapital("Bogotá");
+        country.setCountryIdependenceDate("20/07/1810");
+
+        when(countryRepository.findCountryByIsoCode(countryId)).thenReturn(country);
+        when(diferenciaEntreFechas.calculateYearsOfIndependency(country.getCountryIdependenceDate()))
+                .thenReturn(Period.of(213, 8, 20));
+
+        ResponseEntity<CountryResponse> response = independencyController.getCountryDetails(countryId);
+        CountryResponse countryResponse = response.getBody();
+
+        assertEquals("Colombia", countryResponse.getCountryName());
+        assertEquals("Bogotá", countryResponse.getCapitalName());
+        assertEquals(213, countryResponse.getYearsOfIndependency());
     }
 
     @Test
-    void getCountryDetailsWithInvalidCountryCode() {
-        ResponseEntity<CountryResponse> response = restTemplate.getForEntity(
-                buildUrl("/api/country/XX"), CountryResponse.class); // Código inválido de prueba
-        
-        assertEquals(404, response.getStatusCodeValue()); // Esperamos que el endpoint retorne un 404
-        
-        // Si la API devuelve un cuerpo con mensaje de error
-        assertNotNull(response.getBody());
-        assertNull(response.getBody().getCountryName()); // Asegurar que no haya un nombre de país
+    void getCountryDetails_shouldReturnEmptyResponse_whenCountryNotFound() {
+        String countryId = "US";
+        when(countryRepository.findCountryByIsoCode(countryId)).thenReturn(null);
+
+        ResponseEntity<CountryResponse> response = independencyController.getCountryDetails(countryId);
+
+        assertEquals(new CountryResponse(), response.getBody());
     }
 }

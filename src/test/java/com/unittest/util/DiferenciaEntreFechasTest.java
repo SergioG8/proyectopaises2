@@ -1,67 +1,39 @@
 package com.unittest.util;
-
-import com.unittest.util.DiferenciaEntreFechas;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
 import java.time.Period;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 class DiferenciaEntreFechasTest {
+    private final DiferenciaEntreFechas diferenciaEntreFechas = new DiferenciaEntreFechas();
 
-    @Autowired
-    DiferenciaEntreFechas diferenciaEntreFechas;
+    @Test
+    void calculateYearsOfIndependency_shouldReturnCorrectPeriod() {
+        String independenceDate = "20/07/1810"; 
 
-    @BeforeAll
-    public static void setUpClass() throws Exception {
-    }
+        Period period = diferenciaEntreFechas.calculateYearsOfIndependency(independenceDate);
 
-    @AfterAll
-    public static void tearDownClass() throws Exception {
-    }
-
-    @BeforeEach
-    public void setUp() throws Exception {
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
+        assertEquals(214, period.getYears());
     }
 
     @Test
-    void calculateYearsOfIndependency() {
-        diferenciaEntreFechas = new DiferenciaEntreFechas();
-        String fechaIndependencia = "27/02/1844";
-        LocalDate today = LocalDate.now();
-        Period resultado = diferenciaEntreFechas.calculateYearsOfIndependency(fechaIndependencia);
-        //System.out.println(resultado.getYears());
-        //System.out.println(resultado.getMonths());
-        //System.out.println(resultado.getDays());
-        
-        Assertions.assertEquals(0,resultado.getMonths() );
-        Assertions.assertEquals(24,resultado.getDays() );
-        Assertions.assertEquals(181,resultado.getYears() );
-    }
+    void calculateYearsOfIndependency_shouldHandleDifferentDateFormats() {
+        // Arrange
+        String independenceDate = "1/1/2000";
 
-    /**
-     * Test of calculateYearsOfIndependency method, of class DiferenciaEntreFechas.
-     */
+        // Act
+        Period period = diferenciaEntreFechas.calculateYearsOfIndependency(independenceDate);
+
+        // Assert
+        assertEquals(24, period.getYears());
+    }
     @Test
-    public void testCalculateYearsOfIndependency() {
-        System.out.println("calculateYearsOfIndependency");
-        String independenceDay = "";
-        DiferenciaEntreFechas instance = new DiferenciaEntreFechas();
-        Period expResult = null;
-        Period result = instance.calculateYearsOfIndependency(independenceDay);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    void calculateYearsOfIndependency_shouldHandleCurrentDate() {
+        //Arrange
+        String independenceDate = "20/12/2023";
+
+        //Act
+        Period period = diferenciaEntreFechas.calculateYearsOfIndependency(independenceDate);
+
+        //Assert
+        assertEquals(1, period.getYears());
     }
 }

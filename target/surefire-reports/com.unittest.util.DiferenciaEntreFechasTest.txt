@@ -1,8 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.unittest.util.DiferenciaEntreFechasTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.039 s <<< FAILURE! - in com.unittest.util.DiferenciaEntreFechasTest
-testCalculateYearsOfIndependency  Time elapsed: 0.024 s  <<< ERROR!
-java.time.format.DateTimeParseException: Text '' could not be parsed at index 0
-	at com.unittest.util.DiferenciaEntreFechasTest.testCalculateYearsOfIndependency(DiferenciaEntreFechasTest.java:62)
-

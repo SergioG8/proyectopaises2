@@ -1,5 +1,4 @@
 com\unittest\controller\IndependencyControllerTest.class
 com\unittest\ApplicationTest.class
-com\unittest\controller\CountryControllerIntegrationTest.class
-com\unittest\TutorialUnitTestApplication.class
+com\unittest\controller\IndependencyControllerIntegrationTest.class
 com\unittest\util\DiferenciaEntreFechasTest.class
